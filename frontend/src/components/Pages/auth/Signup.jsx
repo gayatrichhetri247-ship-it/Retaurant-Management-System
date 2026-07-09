@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import SignupForm from "../molecules/SignupForm";
-import signup from "../../assets/images/signup.png";
+import SignupForm from "../../molecules/SignupForm";
+import signup from "../../../assets/images/signup.png"
 
 const Signup = () => {
   const [isDesktop, setIsDesktop] = useState(false);

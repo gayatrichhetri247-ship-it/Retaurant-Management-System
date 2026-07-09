@@ -5,6 +5,7 @@ import InputBox from "../atoms/InputBox";
 import Checkbox from "../atoms/CheckBox";
 import Button from "../atoms/Button";
 import GoogleLogin from "./GoogleLogin";
+import { Link } from "react-router-dom";
 
 const SignupForm = () => {
   return (
@@ -207,7 +208,7 @@ const SignupForm = () => {
         style={{ animationDelay: '660ms' }}
       >
         <p className="text-gray-400">Already have an account?</p>
-        <p className="text-blue-500 font-bold underline cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-105 active:scale-95">Sign in</p>
+       <Link to="/login"><p className="text-blue-500 font-bold underline cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-105 active:scale-95">Sign in</p></Link> 
       </div>
       
     </div>

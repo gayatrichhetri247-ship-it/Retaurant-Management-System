@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import LoginForm from "../molecules/LoginForm";
-import login from "../../assets/images/login.png";
-
+import login from "../../../assets/images/login.png"
+import LoginForm from "../../molecules/LoginForm"
 const Login = () => {
   const [isDesktop, setIsDesktop] = useState(false);
 
@@ -66,7 +65,8 @@ const Login = () => {
         }}
       >
         <div className="w-full max-w-md mx-auto opacity-0 animate-form-fade">
-          <LoginForm />
+          <LoginForm/>
+
         </div>
       </div>
 
