@@ -3,9 +3,10 @@ import Button from './components/atoms/Button'
 import InputBox from './components/atoms/InputBox'
 import Google from './components/atoms/Google'
 import GoogleLogin from './components/molecules/GoogleLogin'
-import Login from './auth/Login'
 import LoginForm from './components/molecules/LoginForm'
 import SignupForm from './components/molecules/SignupForm'
+import Login from './components/auth/Login'
+import Signup from './components/auth/Signup'
 
 
 const App = () => {
@@ -19,7 +20,8 @@ const App = () => {
       {/* <Google/> */}
       {/* <GoogleLogin/> */}
       {/* <Login/> */}
-      <LoginForm/>
+      <Signup/>
+      {/* <LoginForm/> */}
       {/* <SignupForm/> */}
       {/* <Email color="red"/> */}
       
