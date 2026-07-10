@@ -1,16 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
 import { TfiEmail } from "react-icons/tfi";
-import { FaEye, FaRegUser } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaRegUser } from "react-icons/fa"; // Added FaEyeSlash
 import InputBox from "../atoms/InputBox";
 import Checkbox from "../atoms/CheckBox";
 import Button from "../atoms/Button";
 import GoogleLogin from "./GoogleLogin";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signUpUser } from "../../api/auth.services";
+import { AuthSuccess } from "../../redux/features/authSlice";
 
 const SignupForm = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth);
+  
+  // State for form data (including terms agreement)
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+    agreeToTerms: false, 
+  });
+
+  // State to toggle password visibility independently
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Feature validation: Passwords match
+    if (formData.password !== formData.confirm_password) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    // Feature validation: Agree to terms check
+    if (!formData.agreeToTerms) {
+      alert("You must agree to the Terms & Conditions to proceed.");
+      return;
+    }
+
+    try {
+      const res = await signUpUser({
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        confirm_password: formData.confirm_password,
+      });
+      
+      dispatch(AuthSuccess(res.user));
+      navigate("/");
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-3.5 items-center w-full max-w-md mx-auto p-6 backdrop-blur-sm select-none relative overflow-hidden group/form">
-      
       {/* Premium Integrated Stylesheet */}
       <style>{`
         @keyframes subtlePan {
@@ -53,17 +110,17 @@ const SignupForm = () => {
           opacity: 1;
         }
       `}</style>
-      
+
       {/* Decorative Interactive Gradient Bar */}
-      <div 
+      <div
         className="w-16 h-1.5 rounded-full bg-gradient-to-r from-blue-400 via-sky-400 to-blue-600 -mb-1 cascade-node shadow-sm transition-all duration-300 group-hover/form:w-24"
-        style={{ animationDelay: '60ms' }}
+        style={{ animationDelay: "60ms" }}
       ></div>
-      
+
       {/* Header Section */}
-      <div 
+      <div
         className="text-center space-y-0.5 cascade-node"
-        style={{ animationDelay: '120ms' }}
+        style={{ animationDelay: "120ms" }}
       >
         <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight transition-all duration-300 group-hover/form:text-transparent group-hover/form:bg-clip-text group-hover/form:bg-gradient-to-r group-hover/form:from-gray-900 group-hover/form:to-blue-700">
           Create Account
@@ -72,14 +129,14 @@ const SignupForm = () => {
           Get started today. It only takes a minute.
         </p>
       </div>
-      
+
       {/* Form Fields & Controls */}
-      <form className="w-full flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
+      <form className="w-full flex flex-col gap-3" onSubmit={handleSubmit}>
         
         {/* Full Name Field */}
-        <div 
+        <div
           className="space-y-1 cascade-node group/input"
-          style={{ animationDelay: '180ms' }}
+          style={{ animationDelay: "180ms" }}
         >
           <label className="block font-semibold text-gray-800 tracking-wide transition-all duration-300 group-focus-within/input:text-blue-600 group-focus-within/input:translate-x-0.5">
             Full Name
@@ -87,9 +144,16 @@ const SignupForm = () => {
           <div className="relative p-[1px] rounded-xl input-glow-effect transition-all duration-300 focus-within:shadow-lg focus-within:shadow-blue-500/10">
             <div className="relative z-10 bg-white rounded-[11px]">
               <InputBox
+                id="fullName"
+                name="fullName"
+                required
+                value={formData.fullName}
+                onChange={handleChange}
                 type="text"
                 placeholder="e.g., Sam Wilson"
-                icon={<FaRegUser className="text-blue-500 transition-transform duration-300 group-focus-within/input:scale-110 group-focus-within/input:rotate-6" />}
+                icon={
+                  <FaRegUser className="text-blue-500 transition-transform duration-300 group-focus-within/input:scale-110 group-focus-within/input:rotate-6" />
+                }
                 className="w-full px-4 py-2 border border-gray-100 rounded-xl bg-gray-50/30 focus:bg-white transition-all outline-none"
               />
             </div>
@@ -97,9 +161,9 @@ const SignupForm = () => {
         </div>
 
         {/* Email Field */}
-        <div 
+        <div
           className="space-y-1 cascade-node group/input"
-          style={{ animationDelay: '240ms' }}
+          style={{ animationDelay: "240ms" }}
         >
           <label className="block font-semibold text-gray-800 tracking-wide transition-all duration-300 group-focus-within/input:text-blue-600 group-focus-within/input:translate-x-0.5">
             Email
@@ -107,9 +171,17 @@ const SignupForm = () => {
           <div className="relative p-[1px] rounded-xl input-glow-effect transition-all duration-300 focus-within:shadow-lg focus-within:shadow-blue-500/10">
             <div className="relative z-10 bg-white rounded-[11px]">
               <InputBox
+                id="email"
+                name="email"
                 type="email"
+                autoComplete="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="e.g., sam@design.co"
-                icon={<TfiEmail className="text-blue-500 transition-transform duration-300 group-focus-within/input:scale-110 group-focus-within/input:rotate-6" />}
+                icon={
+                  <TfiEmail className="text-blue-500 transition-transform duration-300 group-focus-within/input:scale-110 group-focus-within/input:rotate-6" />
+                }
                 className="w-full px-4 py-2 border border-gray-100 rounded-xl bg-gray-50/30 focus:bg-white transition-all outline-none"
               />
             </div>
@@ -117,9 +189,9 @@ const SignupForm = () => {
         </div>
 
         {/* Password Field */}
-        <div 
+        <div
           className="space-y-1 cascade-node group/input"
-          style={{ animationDelay: '300ms' }}
+          style={{ animationDelay: "300ms" }}
         >
           <label className="block font-semibold text-gray-800 tracking-wide transition-all duration-300 group-focus-within/input:text-blue-600 group-focus-within/input:translate-x-0.5">
             Password
@@ -127,9 +199,27 @@ const SignupForm = () => {
           <div className="relative p-[1px] rounded-xl input-glow-effect transition-all duration-300 focus-within:shadow-lg focus-within:shadow-blue-500/10">
             <div className="relative z-10 bg-white rounded-[11px]">
               <InputBox
-                type="password"
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                required
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="••••••••••"
-                icon={<FaEye className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" />}
+                icon={
+                  showPassword ? (
+                    <FaEyeSlash 
+                      onClick={() => setShowPassword(!showPassword)} 
+                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" 
+                    />
+                  ) : (
+                    <FaEye 
+                      onClick={() => setShowPassword(!showPassword)} 
+                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" 
+                    />
+                  )
+                }
                 className="w-full px-4 py-2 border border-gray-100 rounded-xl bg-gray-50/30 focus:bg-white transition-all outline-none"
               />
             </div>
@@ -137,9 +227,9 @@ const SignupForm = () => {
         </div>
 
         {/* Confirm Password Field */}
-        <div 
+        <div
           className="space-y-1 cascade-node group/input"
-          style={{ animationDelay: '360ms' }}
+          style={{ animationDelay: "360ms" }}
         >
           <label className="block font-semibold text-gray-800 tracking-wide transition-all duration-300 group-focus-within/input:text-blue-600 group-focus-within/input:translate-x-0.5">
             Confirm Password
@@ -147,9 +237,27 @@ const SignupForm = () => {
           <div className="relative p-[1px] rounded-xl input-glow-effect transition-all duration-300 focus-within:shadow-lg focus-within:shadow-blue-500/10">
             <div className="relative z-10 bg-white rounded-[11px]">
               <InputBox
-                type="password"
-                placeholder="••••••••••"
-                icon={<FaEye className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" />}
+                id="confirm_password"
+                name="confirm_password"
+                type={showConfirmPassword ? "text" : "password"}
+                autoComplete="new-password"
+                required
+                value={formData.confirm_password}
+                onChange={handleChange}
+                placeholder="Confirm Password"
+                icon={
+                  showConfirmPassword ? (
+                    <FaEyeSlash 
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
+                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" 
+                    />
+                  ) : (
+                    <FaEye 
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
+                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" 
+                    />
+                  )
+                }
                 className="w-full px-4 py-2 border border-gray-100 rounded-xl bg-gray-50/30 focus:bg-white transition-all outline-none"
               />
             </div>
@@ -157,60 +265,73 @@ const SignupForm = () => {
         </div>
 
         {/* Terms and Conditions */}
-        <div 
+        <div
           className="flex items-center justify-between mt-0.5 cascade-node"
-          style={{ animationDelay: '420ms' }}
+          style={{ animationDelay: "420ms" }}
         >
           <label className="flex items-center gap-2 text-gray-600 cursor-pointer group/check">
             <div className="transition-transform duration-200 group-hover/check:scale-110 active:scale-95">
-              <Checkbox className="w-3.5 h-3.5 rounded-md border-gray-300 group-hover/check:border-blue-500 transition-colors duration-200" />
+              <Checkbox 
+                name="agreeToTerms"
+                checked={formData.agreeToTerms}
+                onChange={handleChange}
+                className="w-3.5 h-3.5 rounded-md border-gray-300 group-hover/check:border-blue-500 transition-colors duration-200" 
+              />
             </div>
             <span className="font-medium group-hover/check:text-gray-900 transition-colors duration-200">
               I agree to the{" "}
-              <a href="#" className="text-blue-500 underline hover:text-blue-600 transition-colors inline-block hover:-translate-y-px active:translate-y-0">Terms & Conditions</a>
+              <a
+                href="#"
+                className="text-blue-500 underline hover:text-blue-600 transition-colors inline-block hover:-translate-y-px active:translate-y-0"
+              >
+                Terms & Conditions
+              </a>
             </span>
-          </label> 
+          </label>
         </div>
 
         {/* Gradient Signup Button */}
-        <div 
+        <div
           className="w-full mt-1 cascade-node"
-          style={{ animationDelay: '480ms' }}
+          style={{ animationDelay: "480ms" }}
         >
-          <Button 
-            text="Register Account" 
+          <Button
+            type="submit"
+            text="Register Account"
             className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-500 via-sky-500 to-blue-600 bg-[size:200%_auto] hover:bg-right text-white font-bold shadow-md shadow-blue-500/10 hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-1 transition-all duration-500 active:translate-y-0 active:shadow-sm relative overflow-hidden animate-shimmer-loop"
           />
         </div>
       </form>
 
       {/* Modern Divider */}
-      <div 
+      <div
         className="w-full flex items-center gap-3 my-0.5 cascade-node"
-        style={{ animationDelay: '540ms' }}
+        style={{ animationDelay: "540ms" }}
       >
         <div className="h-px flex-grow bg-gray-200 transition-all duration-500 group-hover/form:bg-blue-100"></div>
-        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-1.5 transition-colors duration-500 group-hover/form:text-blue-400">or</span>
+        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-1.5 transition-colors duration-500 group-hover/form:text-blue-400">
+          or
+        </span>
         <div className="h-px flex-grow bg-gray-200 transition-all duration-500 group-hover/form:bg-blue-100"></div>
       </div>
 
       {/* Social Login Button */}
-      <div 
-        className="w-full cascade-node"
-        style={{ animationDelay: '600ms' }}
-      >
+      <div className="w-full cascade-node" style={{ animationDelay: "600ms" }}>
         <GoogleLogin className="w-full rounded-xl border border-gray-200/80 shadow-sm bg-white transform hover:-translate-y-1 hover:shadow-md hover:border-gray-300 transition-all duration-300 active:translate-y-0 active:shadow-sm" />
       </div>
 
       {/* Toggle to Login */}
-      <div 
+      <div
         className="flex gap-1 justify-center cascade-node"
-        style={{ animationDelay: '660ms' }}
+        style={{ animationDelay: "660ms" }}
       >
         <p className="text-gray-400">Already have an account?</p>
-       <Link to="/login"><p className="text-blue-500 font-bold underline cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-105 active:scale-95">Sign in</p></Link> 
+        <Link to="/login">
+          <p className="text-blue-500 font-bold underline cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-105 active:scale-95">
+            Sign in
+          </p>
+        </Link>
       </div>
-      
     </div>
   );
 };

@@ -1,16 +1,93 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TfiEmail } from "react-icons/tfi";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Added FaEyeSlash for toggle visibility
 import InputBox from "../atoms/InputBox";
 import Checkbox from "../atoms/CheckBox";
 import Button from "../atoms/Button";
 import GoogleLogin from "./GoogleLogin";
-import {Link} from 'react-router'
+import { Link } from "react-router";
 
 const LoginForm = () => {
+  // 1. State management for form inputs and errors
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+
+    if (savedEmail) {
+      setFormData((prev) => ({
+        ...prev,
+        email: savedEmail,
+      }));
+
+      setRememberMe(true);
+    }
+  }, []);
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  setErrors((prev) => ({
+    ...prev,
+    [name]: "",
+  }));
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
+  // 2. Validation Logic
+  const validateForm = () => {
+    let valid = true;
+    let newErrors = { email: "", password: "" };
+
+    // Email validation
+    if (!formData.email.trim()) {
+      newErrors.email = "Email address is required.";
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+      valid = false;
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
+      valid = false;
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters long.";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  // Handle Form Submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      console.log("Form successfully submitted backend payload:", formData);
+      // Proceed with your Auth API call here
+    }
+    // 3. The "Remember Me" Logic execution
+    if (rememberMe) {
+      // Save email permanently to browser storage
+      localStorage.setItem("rememberedEmail", formData.email);
+    } else {
+      // Clear it if the user unchecked it
+      localStorage.removeItem("rememberedEmail");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 items-center w-full max-w-md mx-auto p-6 rounded-3xl relative overflow-hidden group/form">
-      
       {/* Premium Integrated Stylesheet */}
       <style>{`
         @keyframes subtlePan {
@@ -21,14 +98,9 @@ const LoginForm = () => {
           0% { opacity: 0; transform: translateY(20px) scale(0.98); filter: blur(4px); }
           100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
         }
-        @keyframes luxuryShimmer {
-          0% { transform: translate(-30%, -30%) rotate(0deg); }
-          100% { transform: translate(-30%, -30%) rotate(360deg); }
-        }
-        @keyframes horizontalShimmer {
-          0% { left: -150%; }
-          50% { left: 150%; }
-          100% { left: 150%; }
+        @keyframes errorIn {
+          0% { opacity: 0; transform: translateY(-4px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
         .cascade-node {
           opacity: 0;
@@ -40,6 +112,11 @@ const LoginForm = () => {
           inset: 0;
           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
           animation: horizontalShimmer 3s infinite ease-in-out;
+        }
+        @keyframes horizontalShimmer {
+          0% { left: -150%; }
+          50% { left: 150%; }
+          100% { left: 150%; }
         }
         .input-glow-effect::before {
           content: '';
@@ -53,19 +130,22 @@ const LoginForm = () => {
           transition: opacity 0.3s ease;
           z-index: 0;
         }
+        .input-glow-effect.error-glow::before {
+          background: linear-gradient(45deg, #ef4444, #f87171, #ef4444);
+        }
         .input-glow-effect:focus-within::before {
           opacity: 1;
         }
       `}</style>
 
-      <div 
+      <div
         className="w-16 h-1.5 rounded-full bg-gradient-to-r from-blue-400 via-sky-400 to-blue-600 -mb-1 cascade-node shadow-sm transition-all duration-300 group-hover/form:w-24"
-        style={{ animationDelay: '80ms' }}
+        style={{ animationDelay: "80ms" }}
       ></div>
 
-      <div 
+      <div
         className="text-center space-y-1 cascade-node"
-        style={{ animationDelay: '140ms' }}
+        style={{ animationDelay: "140ms" }}
       >
         <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight transition-all duration-300 group-hover/form:text-transparent group-hover/form:bg-clip-text group-hover/form:bg-gradient-to-r group-hover/form:from-gray-900 group-hover/form:to-blue-700">
           Hello There!
@@ -74,103 +154,159 @@ const LoginForm = () => {
           Good to see you again. Sign in to continue.
         </p>
       </div>
-      
-      {/* Form Fields & Controls */}
-      <form className="w-full flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
 
-        <div 
+      {/* Form Fields & Controls */}
+      <form className="w-full flex flex-col gap-4" onSubmit={handleSubmit}>
+        {/* Email Field */}
+        <div
           className="space-y-1 cascade-node group/input"
-          style={{ animationDelay: '200ms' }}
+          style={{ animationDelay: "200ms" }}
         >
-          <label className="block font-semibold text-gray-800 tracking-wide transition-all duration-300 group-focus-within/input:text-blue-600 group-focus-within/input:translate-x-0.5">
+          <label
+            className={`block font-semibold tracking-wide transition-all duration-300 group-focus-within/input:translate-x-0.5 ${errors.email ? "text-red-500" : "text-gray-800 group-focus-within/input:text-blue-600"}`}
+          >
             Email
           </label>
-          <div className="relative p-[1px] rounded-xl input-glow-effect transition-all duration-300 focus-within:shadow-lg focus-within:shadow-blue-500/10">
+          <div
+            className={`relative p-[1px] rounded-xl input-glow-effect transition-all duration-300 focus-within:shadow-lg ${errors.email ? "error-glow focus-within:shadow-red-500/10" : "focus-within:shadow-blue-500/10"}`}
+          >
             <div className="relative z-10 bg-white rounded-[11px]">
               <InputBox
                 type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="e.g., sam@design.co"
-                icon={<TfiEmail className="text-blue-500 transition-transform duration-300 group-focus-within/input:scale-110 group-focus-within/input:rotate-6" />}
-                className="w-full px-4 py-2 border border-gray-100 rounded-xl bg-gray-50/30 focus:bg-white transition-all outline-none"
+                icon={
+                  <TfiEmail
+                    className={`${errors.email ? "text-red-400" : "text-blue-500"} transition-transform duration-300 group-focus-within/input:scale-110 group-focus-within/input:rotate-6`}
+                  />
+                }
+                className={`w-full px-4 py-2 border rounded-xl bg-gray-50/30 focus:bg-white transition-all outline-none ${errors.email ? "border-red-200 focus:border-red-400" : "border-gray-100"}`}
               />
             </div>
           </div>
+          {errors.email && (
+            <p
+              className="text-xs font-medium text-red-500 pl-1"
+              style={{ animation: "errorIn 0.3s ease forwards" }}
+            >
+              {errors.email}
+            </p>
+          )}
         </div>
 
-
-        <div 
+        {/* Password Field */}
+        <div
           className="space-y-1 cascade-node group/input"
-          style={{ animationDelay: '260ms' }}
+          style={{ animationDelay: "260ms" }}
         >
-          <label className="block font-semibold text-gray-800 tracking-wide transition-all duration-300 group-focus-within/input:text-blue-600 group-focus-within/input:translate-x-0.5">
+          <label
+            className={`block font-semibold tracking-wide transition-all duration-300 group-focus-within/input:translate-x-0.5 ${errors.password ? "text-red-500" : "text-gray-800 group-focus-within/input:text-blue-600"}`}
+          >
             Password
           </label>
-          <div className="relative p-[1px] rounded-xl input-glow-effect transition-all duration-300 focus-within:shadow-lg focus-within:shadow-blue-500/10">
+          <div
+            className={`relative p-[1px] rounded-xl input-glow-effect transition-all duration-300 focus-within:shadow-lg ${errors.password ? "error-glow focus-within:shadow-red-500/10" : "focus-within:shadow-blue-500/10"}`}
+          >
             <div className="relative z-10 bg-white rounded-[11px]">
               <InputBox
-                type="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="••••••••••"
-                icon={<FaEye className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" />}
-                className="w-full px-4 py-2 border border-gray-100 rounded-xl bg-gray-50/30 focus:bg-white transition-all outline-none"
+                icon={
+                  showPassword ? (
+                    <FaEyeSlash
+                      onClick={() => setShowPassword(false)}
+                      className="text-gray-400 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200"
+                    />
+                  ) : (
+                    <FaEye
+                      onClick={() => setShowPassword(true)}
+                      className={`${errors.password ? "text-red-400" : "text-blue-500"} cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200`}
+                    />
+                  )
+                }
+                className={`w-full px-4 py-2 border rounded-xl bg-gray-50/30 focus:bg-white transition-all outline-none ${errors.password ? "border-red-200 focus:border-red-400" : "border-gray-100"}`}
               />
             </div>
           </div>
+          {errors.password && (
+            <p
+              className="text-xs font-medium text-red-500 pl-1"
+              style={{ animation: "errorIn 0.3s ease forwards" }}
+            >
+              {errors.password}
+            </p>
+          )}
         </div>
 
-
-        <div 
+        <div
           className="flex items-center justify-between mt-0.5 cascade-node"
-          style={{ animationDelay: '320ms' }}
+          style={{ animationDelay: "320ms" }}
         >
           <label className="flex items-center gap-2 text-gray-600 cursor-pointer group/check select-none">
             <div className="transition-transform duration-200 group-hover/check:scale-110 active:scale-95">
-              <Checkbox className="w-3.5 h-3.5 rounded-md border-gray-300 group-hover/check:border-blue-500 transition-colors duration-200" />
+              <Checkbox
+                id="remember-me"
+                name="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
             </div>
-            <span className="font-medium group-hover/check:text-gray-900 transition-colors duration-200">Remember me</span>
-          </label> 
-          <Link to="/forgot" className="font-semibold text-blue-500 transition-all duration-200 hover:text-blue-600 hover:underline hover:-translate-y-0.5 active:translate-y-0">
+            <span className="font-medium group-hover/check:text-gray-900 transition-colors duration-200">
+              Remember me
+            </span>
+          </label>
+          <Link
+            to="/forgot"
+            className="font-semibold text-blue-500 transition-all duration-200 hover:text-blue-600 hover:underline hover:-translate-y-0.5 active:translate-y-0"
+          >
             Forgot Password?
           </Link>
         </div>
 
         {/* Gradient Login Button */}
-        <div 
+        <div
           className="w-full mt-1 cascade-node"
-          style={{ animationDelay: '380ms' }}
+          style={{ animationDelay: "380ms" }}
         >
-          <Button 
-            text="Sign In to Dashboard" 
+          <Button
+            type="submit"
+            text="Sign In to Dashboard"
             className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-500 via-sky-500 to-blue-600 bg-[size:200%_auto] hover:bg-right text-white font-bold shadow-md shadow-blue-500/10 hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-1 transition-all duration-500 active:translate-y-0 active:shadow-sm relative overflow-hidden animate-shimmer-loop"
           />
         </div>
       </form>
 
-      <div 
+      <div
         className="w-full flex items-center gap-3 my-0.5 cascade-node"
-        style={{ animationDelay: '440ms' }}
+        style={{ animationDelay: "440ms" }}
       >
         <div className="h-px flex-grow bg-gray-200 transition-all duration-500 group-hover/form:bg-blue-100"></div>
-        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-1.5 transition-colors duration-500 group-hover/form:text-blue-400">or</span>
+        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-1.5 transition-colors duration-500 group-hover/form:text-blue-400">
+          or
+        </span>
         <div className="h-px flex-grow bg-gray-200 transition-all duration-500 group-hover/form:bg-blue-100"></div>
       </div>
 
-
-      <div 
-        className="w-full cascade-node"
-        style={{ animationDelay: '500ms' }}
-      >
+      <div className="w-full cascade-node" style={{ animationDelay: "500ms" }}>
         <GoogleLogin className="w-full rounded-xl border border-gray-200/80 shadow-sm bg-white transform hover:-translate-y-1 hover:shadow-md hover:border-gray-300 transition-all duration-300 active:translate-y-0 active:shadow-sm" />
       </div>
 
-  
-      <div 
+      <div
         className="flex gap-1 justify-center cascade-node"
-        style={{ animationDelay: '560ms' }}
+        style={{ animationDelay: "560ms" }}
       >
         <p className="text-gray-400">Don't have an account?</p>
-       <Link to="/signup"><p className="text-blue-500 font-bold underline cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-105 active:scale-95">Sign up</p> </Link> 
+        <Link to="/signup">
+          <p className="text-blue-500 font-bold underline cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-105 active:scale-95">
+            Sign up
+          </p>{" "}
+        </Link>
       </div>
-      
     </div>
   );
 };

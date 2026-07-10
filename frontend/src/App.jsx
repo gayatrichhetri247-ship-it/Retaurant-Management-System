@@ -3,7 +3,9 @@ import { Route, Routes } from 'react-router-dom'
 import Login from './components/Pages/auth/Login'
 import Signup from './components/Pages/auth/Signup'
 import Forgot from './components/Pages/auth/Forgot'
-import VerifyOtp from './components/molecules/VerifyOtp'
+import Home from './components/Pages/customer/Home'
+import Verify from './components/Pages/auth/Verify'
+import PasswordChange from './components/Pages/auth/PasswordChange'
 
 
 
@@ -14,7 +16,10 @@ const App = () => {
       <Route path="/login" element={<Login/>} />
       <Route path='/signup' element={<Signup/>} />
       <Route path='/forgot' element={<Forgot/>} />
-      <Route path='/verify' element={<VerifyOtp/>} />
+      <Route path='/verify' element={<Verify/>} />
+      <Route path='/newpassword' element={<PasswordChange/>} />
+
+      <Route path='/home' element={<Home/>} />
     </Routes>
     
   )
