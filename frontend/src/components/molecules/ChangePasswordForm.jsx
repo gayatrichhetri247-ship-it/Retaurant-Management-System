@@ -130,7 +130,7 @@ const ChangePasswordForm = () => {
           style={{ animationDelay: '380ms' }}
         >
           <Button 
-            text="Send OTP" 
+            text="Change Password" 
             className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-500 via-sky-500 to-blue-600 bg-[size:200%_auto] hover:bg-right text-white font-bold shadow-md shadow-blue-500/10 hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-1 transition-all duration-500 active:translate-y-0 active:shadow-sm relative overflow-hidden animate-shimmer-loop"
           />
         </div>

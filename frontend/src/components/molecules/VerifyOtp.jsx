@@ -2,10 +2,14 @@ import React, { useState, useRef } from "react";
 import InputBox from "../atoms/InputBox";
 import Button from "../atoms/Button";
 import { Link } from "react-router";
+import Countdown from "react-countdown";
 
 const VerifyOtp = () => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const inputRefs = useRef([]);
+
+  // Check if any field is still empty
+  const isOtpIncomplete = otp.some((digit) => digit === "");
 
   // Handle number input and auto-focus moving forward
   const handleChange = (element, index) => {
@@ -149,7 +153,13 @@ const VerifyOtp = () => {
         >
           <Button
             text="Verify Code"
-            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-500 via-sky-500 to-blue-600 bg-[size:200%_auto] hover:bg-right text-white font-bold shadow-md shadow-blue-500/10 hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-1 transition-all duration-500 active:translate-y-0 active:shadow-sm relative overflow-hidden animate-shimmer-loop"
+            disabled={isOtpIncomplete}
+            className={`w-full py-2.5 rounded-xl text-white font-bold transition-all duration-500 relative overflow-hidden
+              ${
+                isOtpIncomplete
+                  ? "bg-gray-500 cursor-not-allowed opacity-60"
+                  : "bg-gradient-to-r from-blue-500 via-sky-500 to-blue-600 bg-[size:200%_auto] hover:bg-right shadow-md shadow-blue-500/10 hover:shadow-xl hover:shadow-blue-500/30 transform hover:-translate-y-1 active:translate-y-0 active:shadow-sm animate-shimmer-loop"
+              }`}
           />
         </div>
       </form>
@@ -160,9 +170,25 @@ const VerifyOtp = () => {
       >
         <p className="text-gray-400">Didn't receive the code?</p>
         <Link to="/login">
-          <p className="flex gap-1  font-bold  cursor-pointer  transition-all duration-200 hover:scale-105 active:scale-95">
-            <p className="underline text-blue-500">Resend</p> <p className="text-gray-600">(60s)</p>
-          </p>
+          <span className="flex gap-1 font-bold cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95">
+            <Countdown
+              renderer={({ minutes, seconds, completed }) => {
+                if (completed) {
+                  return (
+                    <span className="underline text-blue-500">Resend</span>
+                  );
+                } else {
+                  return (
+                    <span>
+                      {" "}
+                      {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+                    </span>
+                  );
+                }
+              }}
+              date={new Date().getTime() + 2 * 60 * 1000}
+            />
+          </span>
         </Link>
       </div>
     </div>
