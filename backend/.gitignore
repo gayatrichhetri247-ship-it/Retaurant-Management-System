@@ -1,1 +1,89 @@
-node_modules
+# ==========================================
+# Environment Variables & Secrets (CRITICAL)
+# ==========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+config.json
+
+# ==========================================
+# Node.js / Express / NestJS
+# ==========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+out/
+
+# ==========================================
+# Python (Django / FastAPI / Flask)
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.env/
+.venv/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ==========================================
+# Java (Spring Boot)
+# ==========================================
+*.class
+*.log
+*.tar
+*.gz
+*.war
+*.ear
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# ==========================================
+# Go (Golang)
+# ==========================================
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+bin/
+
+# ==========================================
+# Databases & Storage
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+# Ignore local docker database volumes
+.docker/db_data/
+
+# ==========================================
+# Editor & OS Specific Files
+# ==========================================
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

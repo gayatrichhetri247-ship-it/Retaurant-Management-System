@@ -14,14 +14,14 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth);
-  
+
   // State for form data (including terms agreement)
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     password: "",
     confirm_password: "",
-    agreeToTerms: false, 
+    agreeToTerms: false,
   });
 
   // State to toggle password visibility independently
@@ -58,9 +58,9 @@ const SignupForm = () => {
         password: formData.password,
         confirm_password: formData.confirm_password,
       });
-      
+
       dispatch(AuthSuccess(res.user));
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.error("Signup failed:", error);
     }
@@ -132,7 +132,6 @@ const SignupForm = () => {
 
       {/* Form Fields & Controls */}
       <form className="w-full flex flex-col gap-3" onSubmit={handleSubmit}>
-        
         {/* Full Name Field */}
         <div
           className="space-y-1 cascade-node group/input"
@@ -209,14 +208,14 @@ const SignupForm = () => {
                 placeholder="••••••••••"
                 icon={
                   showPassword ? (
-                    <FaEyeSlash 
-                      onClick={() => setShowPassword(!showPassword)} 
-                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" 
+                    <FaEyeSlash
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200"
                     />
                   ) : (
-                    <FaEye 
-                      onClick={() => setShowPassword(!showPassword)} 
-                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" 
+                    <FaEye
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200"
                     />
                   )
                 }
@@ -247,14 +246,18 @@ const SignupForm = () => {
                 placeholder="Confirm Password"
                 icon={
                   showConfirmPassword ? (
-                    <FaEyeSlash 
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
-                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" 
+                    <FaEyeSlash
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200"
                     />
                   ) : (
-                    <FaEye 
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
-                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200" 
+                    <FaEye
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="text-blue-500 cursor-pointer hover:scale-120 hover:text-blue-600 active:scale-90 transition-all duration-200"
                     />
                   )
                 }
@@ -271,11 +274,11 @@ const SignupForm = () => {
         >
           <label className="flex items-center gap-2 text-gray-600 cursor-pointer group/check">
             <div className="transition-transform duration-200 group-hover/check:scale-110 active:scale-95">
-              <Checkbox 
+              <Checkbox
                 name="agreeToTerms"
                 checked={formData.agreeToTerms}
                 onChange={handleChange}
-                className="w-3.5 h-3.5 rounded-md border-gray-300 group-hover/check:border-blue-500 transition-colors duration-200" 
+                className="w-3.5 h-3.5 rounded-md border-gray-300 group-hover/check:border-blue-500 transition-colors duration-200"
               />
             </div>
             <span className="font-medium group-hover/check:text-gray-900 transition-colors duration-200">
@@ -317,7 +320,11 @@ const SignupForm = () => {
 
       {/* Social Login Button */}
       <div className="w-full cascade-node" style={{ animationDelay: "600ms" }}>
-        <GoogleLogin className="w-full rounded-xl border border-gray-200/80 shadow-sm bg-white transform hover:-translate-y-1 hover:shadow-md hover:border-gray-300 transition-all duration-300 active:translate-y-0 active:shadow-sm" />
+        <GoogleLogin
+          endpoint="google-signup"
+          redirect="/home"
+          className="w-full rounded-xl border border-gray-200/80 shadow-sm bg-white transform hover:-translate-y-1 hover:shadow-md hover:border-gray-300 transition-all duration-300 active:translate-y-0 active:shadow-sm"
+        />
       </div>
 
       {/* Toggle to Login */}

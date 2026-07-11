@@ -1,52 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { TfiEmail } from "react-icons/tfi";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Added FaEyeSlash for toggle visibility
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import InputBox from "../atoms/InputBox";
 import Checkbox from "../atoms/CheckBox";
 import Button from "../atoms/Button";
 import GoogleLogin from "./GoogleLogin";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
+import { useDispatch } from "react-redux"; // Added useDispatch
+import { loginUser } from "../../api/auth.services"; // Import your login API service
+import { AuthSuccess } from "../../redux/features/authSlice"; // Import your AuthSuccess action
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   // 1. State management for form inputs and errors
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-
   const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedPassword = localStorage.getItem("rememberedPassword");
 
-    if (savedEmail) {
-      setFormData((prev) => ({
-        ...prev,
-        email: savedEmail,
-      }));
+    if (savedEmail || savedPassword) {
+      setFormData({
+        email: savedEmail || "",
+        password: savedPassword || "",
+      });
 
       setRememberMe(true);
     }
   }, []);
+
   const handleChange = (e) => {
-  const { name, value } = e.target;
-
-  setErrors((prev) => ({
-    ...prev,
-    [name]: "",
-  }));
-
-  setFormData((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
+    const { name, value } = e.target;
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   // 2. Validation Logic
   const validateForm = () => {
     let valid = true;
     let newErrors = { email: "", password: "" };
 
-    // Email validation
     if (!formData.email.trim()) {
       newErrors.email = "Email address is required.";
       valid = false;
@@ -55,7 +59,6 @@ const LoginForm = () => {
       valid = false;
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required.";
       valid = false;
@@ -69,20 +72,39 @@ const LoginForm = () => {
   };
 
   // Handle Form Submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log("Form successfully submitted backend payload:", formData);
-      // Proceed with your Auth API call here
-    }
-    // 3. The "Remember Me" Logic execution
-    if (rememberMe) {
-      // Save email permanently to browser storage
-      localStorage.setItem("rememberedEmail", formData.email);
-    } else {
-      // Clear it if the user unchecked it
-      localStorage.removeItem("rememberedEmail");
+      try {
+        // Execute real auth request
+        const res = await loginUser({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        // 1. Dispatch the logged-in user details to Redux (e.g. { fullName: 'Alex', email: '...' })
+        dispatch(AuthSuccess(res.user));
+
+        // 2. Handle Remember Me logic
+        // Remember Me
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", formData.email);
+          localStorage.setItem("rememberedPassword", formData.password);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+          localStorage.removeItem("rememberedPassword");
+        }
+
+        // 3. Programmatically navigate to the Profile screen
+        navigate("/profile");
+      } catch (error) {
+        console.error("Login failed:", error);
+        alert(
+          error.response?.data?.message ||
+            "Invalid credentials. Please try again.",
+        );
+      }
     }
   };
 
@@ -268,7 +290,7 @@ const LoginForm = () => {
           </Link>
         </div>
 
-        {/* Gradient Login Button */}
+        {/* Actionable Custom Button (Removed nested Link tag) */}
         <div
           className="w-full mt-1 cascade-node"
           style={{ animationDelay: "380ms" }}
@@ -293,7 +315,11 @@ const LoginForm = () => {
       </div>
 
       <div className="w-full cascade-node" style={{ animationDelay: "500ms" }}>
-        <GoogleLogin className="w-full rounded-xl border border-gray-200/80 shadow-sm bg-white transform hover:-translate-y-1 hover:shadow-md hover:border-gray-300 transition-all duration-300 active:translate-y-0 active:shadow-sm" />
+        <GoogleLogin
+          endpoint="google-login"
+          redirect="/home"
+          className="w-full rounded-xl border border-gray-200/80 shadow-sm bg-white transform hover:-translate-y-1 hover:shadow-md hover:border-gray-300 transition-all duration-300 active:translate-y-0 active:shadow-sm"
+        />
       </div>
 
       <div
