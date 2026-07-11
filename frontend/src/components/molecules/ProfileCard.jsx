@@ -60,7 +60,7 @@ const ProfileCard = () => {
 
         <div className="pt-16">
           <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
-            Welcome Back
+            Welcome 
           </span>
 
           <h2 className="text-2xl font-bold text-slate-800 mt-3 flex items-center gap-2">
@@ -79,16 +79,7 @@ const ProfileCard = () => {
           </div>
         </div>
 
-        <div className="mt-6 pt-5 border-t border-slate-100 flex justify-between items-center">
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="flex items-center gap-2 cursor-pointer text-sm font-medium text-rose-600 hover:text-rose-700 transition-colors"
-          >
-            <FiLogOut className="w-4 h-4" />
-            Logout
-          </button>
-        </div>
+        
       </div>
     </div>
   );
