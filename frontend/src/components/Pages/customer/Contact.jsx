@@ -23,7 +23,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-slate-50/50 py-16 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-6xl mx-auto">
+      <div className=" mx-auto">
         
         {/* Restaurant Header Section */}
         <div className="border-b border-slate-200 pb-8 mb-12">

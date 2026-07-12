@@ -10,6 +10,7 @@ import PasswordChange from './components/Pages/auth/PasswordChange'
 import ProfileCard from './components/molecules/ProfileCard'
 import Header from './components/organisms/Header'
 import Contact from './components/Pages/customer/Contact'
+import Reservations from './components/Pages/customer/Reservation'
 
 const App = () => {
   // 1. Define global authentication state
@@ -33,6 +34,7 @@ const App = () => {
         <Route path='/profile' element={<ProfileCard user={user} />} />
         <Route path='/home' element={<Home user={user} />} />
         <Route path='/contact' element={<Contact/>} />
+        <Route path='/reservations' element={<Reservations/>} />
       </Routes>
     </>
   )
