@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 // Import your logout action (Uncomment and adjust this path to match your structure)
 // import { Logout } from '../../redux/features/authSlice'; 
 
-import { BiShoppingBag, BiLogOut, BiMenu } from 'react-icons/bi';
+// Added BiHeart to the imports
+import { BiShoppingBag, BiHeart, BiLogOut, BiMenu } from 'react-icons/bi';
 import { FiUser } from 'react-icons/fi';
 
 const Header = () => {
@@ -30,7 +31,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full   shadow-xl backdrop-blur-md ">
+    <header className="sticky top-0 z-50 w-full shadow-xl backdrop-blur-md ">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
         {/* Logo Section */}
@@ -68,6 +69,17 @@ const Header = () => {
               <BiShoppingBag size={22} className="group-hover:scale-105 transition-transform duration-150" />
               <span className="absolute -top-1.5 -right-1.5 bg-blue-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center ring-4 ring-slate-900 animate-pulse">
                 3
+              </span>
+            </button>
+          )}
+
+          {/* Conditional Wishlist Button - visible when user is logged in */}
+          {user && (
+            <button className="relative p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-red-400 border border-slate-700/50 hover:border-red-500/30 transition-all duration-200 shadow-inner group">
+              <BiHeart size={22} className="group-hover:scale-105 transition-transform duration-150" />
+              {/* Optional dynamic badge for wishlist count */}
+              <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center ring-4 ring-slate-900">
+                2
               </span>
             </button>
           )}

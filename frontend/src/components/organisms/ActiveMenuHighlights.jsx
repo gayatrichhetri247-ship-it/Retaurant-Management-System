@@ -81,7 +81,7 @@ const ActiveMenuHighlights = ({ dishes = MOCK_DISHES }) => {
   );
 
   return (
-    <section className="mx-auto py-10 font-sans bg-slate-50 min-h-screen overflow-hidden space-y-6">
+    <section className="mx-auto py-10 font-sans bg-slate-50 overflow-hidden space-y-6">
       
       {/* Global Row Header */}
       <div className="flex items-center justify-between border-b border-slate-200 pb-4 px-4 sm:px-6 lg:px-8">
