@@ -30,18 +30,18 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-slate-800 border-b border-slate-700/50 text-slate-100 shadow-xl backdrop-blur-md bg-opacity-95">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full  border-b border-slate-700/50 shadow-xl backdrop-blur-md bg-opacity-95">
+      <div className=" mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
         {/* Logo Section */}
-        <Link to="/" className="flex items-center space-x-3 group cursor-pointer">
+        <Link to="/home" className="flex items-center space-x-3 group cursor-pointer">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-200">
             <span className="text-xl font-black text-white">F</span>
           </div>
           <div className="flex flex-col">
             <div className="flex items-center space-x-1 text-xl font-bold tracking-wide">
               <span className="text-blue-400">Food</span>
-              <span className="text-slate-200">Corner</span>
+              <span className="text-slate-800">Corner</span>
             </div>
           </div>
         </Link>
@@ -51,8 +51,8 @@ const Header = () => {
           {['Home', 'About Us', 'Menu', 'Contact'].map((item) => (
             <a
               key={item}
-              href={`#${item.toLowerCase().replace(' ', '')}`}
-              className="relative text-sm font-semibold text-slate-300 hover:text-blue-400 transition-colors duration-200 after:absolute after:bottom-[-6px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-400 hover:after:w-full after:transition-all after:duration-300"
+              href={`/${item.toLowerCase().replace(' ', '')}`}
+              className="relative text-sm font-semibold text-slate-800 hover:text-blue-400 transition-colors duration-200 after:absolute after:bottom-[-6px] after:left-0 after:w-0 after:h-[2px] after:bg-blue-400 hover:after:w-full after:transition-all after:duration-300"
             >
               {item}
             </a>
