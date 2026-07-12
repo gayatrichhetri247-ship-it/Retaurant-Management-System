@@ -9,6 +9,7 @@ import Verify from './components/Pages/auth/Verify'
 import PasswordChange from './components/Pages/auth/PasswordChange'
 import ProfileCard from './components/molecules/ProfileCard'
 import Header from './components/organisms/Header'
+import Contact from './components/Pages/customer/Contact'
 
 const App = () => {
   // 1. Define global authentication state
@@ -31,6 +32,7 @@ const App = () => {
         <Route path='/newpassword' element={<PasswordChange />} />
         <Route path='/profile' element={<ProfileCard user={user} />} />
         <Route path='/home' element={<Home user={user} />} />
+        <Route path='/contact' element={<Contact/>} />
       </Routes>
     </>
   )
