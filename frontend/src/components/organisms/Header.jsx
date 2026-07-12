@@ -30,8 +30,8 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full  border-b border-slate-700/50 shadow-xl backdrop-blur-md bg-opacity-95">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full   shadow-xl backdrop-blur-md ">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
         {/* Logo Section */}
         <Link to="/home" className="flex items-center space-x-3 group cursor-pointer">
@@ -48,7 +48,7 @@ const Header = () => {
 
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center space-x-8">
-          {['Home', 'About Us', 'Menu', 'Contact'].map((item) => (
+          {['Home','About Us', 'Menu', 'Reservations',  'Contact'].map((item) => (
             <a
               key={item}
               href={`/${item.toLowerCase().replace(' ', '')}`}
@@ -79,16 +79,16 @@ const Header = () => {
                 {/* Profile Link - Redirects to /profile when clicked */}
                 <Link 
                   to="/profile" 
-                  className="flex items-center space-x-2.5 bg-slate-700/40 border border-slate-700 px-3 py-1.5 rounded-xl hover:bg-slate-700/70 hover:border-blue-500/40 transition-all duration-200 cursor-pointer group/profile"
+                  className="flex items-center space-x-2.5 bg-blue-600 border border-slate-700 px-3 py-1.5 rounded-xl hover:bg-blue-800 hover:border-blue-800 transition-all duration-200 cursor-pointer group/profile"
                 >
                   {user.avatarUrl ? (
                     <img 
                       src={user.avatarUrl} 
                       alt={user.name} 
-                      className="w-7 h-7 rounded-full object-cover border border-blue-400 group-hover/profile:border-blue-300 transition-colors duration-200"
+                      className="w-7 h-7 rounded-full object-cover border border-black group-hover/profile:border-blue-300 transition-colors duration-200"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-500/30 group-hover/profile:bg-blue-500/30 transition-colors duration-200">
+                    <div className="w-7 h-7 rounded-full bg-blue-500/20 text-black flex items-center justify-center border border-black group-hover/profile:bg-blue-500/30 transition-colors duration-200">
                       <FiUser size={14} />
                     </div>
                   )}
