@@ -51,6 +51,7 @@ export const registerUser = async (req, res) => {
     res.status(201).json({
       message: "User signed up successfully",
       success: true,
+      token,
       user,
     });
   } catch (error) {
@@ -101,10 +102,11 @@ export const LoginUser = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "user logged in successfully",
-      success: true,
-      user,
-    });
+  message: "user logged in successfully",
+  success: true,
+  token,
+  user,
+});
   } catch (error) {
     res.status(500).json({
       message: "Internal server error",

@@ -60,7 +60,7 @@ const ProfileCard = () => {
 
         <div className="pt-16">
           <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
-            Welcome 
+            Welcome
           </span>
 
           <h2 className="text-2xl font-bold text-slate-800 mt-3 flex items-center gap-2">
@@ -74,12 +74,12 @@ const ProfileCard = () => {
             </div>
             <div className="flex items-center gap-3 text-slate-600 text-sm">
               <FiUser className="w-4 h-4 text-slate-400" />
-              <span>Standard Account</span>
+              <span>
+                {user?.role === "admin" ? "Admin Account" : "Standard Account"}
+              </span>
             </div>
           </div>
         </div>
-
-        
       </div>
     </div>
   );
